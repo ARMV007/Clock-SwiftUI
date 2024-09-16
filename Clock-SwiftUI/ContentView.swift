@@ -23,30 +23,30 @@ struct ContentView: View {
                     )
                     .frame(width: clockSize, height: clockSize)
                 
-                // Hour Marks
+                // Hour Marks with rounded corners
                 ForEach(0..<12) { i in
-                    Rectangle()
+                    RoundedRectangle(cornerRadius: clockSize * 0.005)
                         .fill(Color.black)
                         .frame(width: clockSize * 0.01, height: clockSize * 0.1)
                         .offset(y: -clockSize / 2 + clockSize * 0.05)
                         .rotationEffect(.degrees(Double(i) * 30))
                 }
                 
-                // Hour hand
-                HandView(width: clockSize * 0.02, height: clockSize * 0.3)
-                    .rotationEffect(.degrees(hourHandAngle(for: currentDate)))
-                    .animation(.linear(duration: 0.5), value: currentDate)
-
-                
-               // Minute hand
-               HandView(width: clockSize * 0.015, height: clockSize * 0.4)
+                // Hour hand with rounded corners
+               HandView(width: clockSize * 0.02, height: clockSize * 0.3, cornerRadius: clockSize * 0.01)
+                   .rotationEffect(.degrees(hourHandAngle(for: currentDate)))
+                   .animation(.linear(duration: 0.5), value: currentDate)
+               
+               // Minute hand with rounded corners
+               HandView(width: clockSize * 0.015, height: clockSize * 0.4, cornerRadius: clockSize * 0.01)
                    .rotationEffect(.degrees(minuteHandAngle(for: currentDate)))
                    .animation(.linear(duration: 0.5), value: currentDate)
-
-               // Second hand
-               HandView(width: clockSize * 0.005, height: clockSize * 0.45, color: .red)
-                    .rotationEffect(.degrees(secondHandAngle()))
+               
+               // Second hand with rounded corners
+               HandView(width: clockSize * 0.005, height: clockSize * 0.45, color: .red, cornerRadius: clockSize * 0.0025)
+                   .rotationEffect(.degrees(secondHandAngle()))
                    .animation(.linear(duration: 0.5), value: totalSeconds)
+             
 
             }
             .onAppear(perform: startTimer)
@@ -85,9 +85,10 @@ struct HandView: View {
     var width: CGFloat
     var height: CGFloat
     var color: Color = .black
+    var cornerRadius: CGFloat
 
     var body: some View {
-        Rectangle()
+        RoundedRectangle(cornerRadius: cornerRadius)
             .fill(color)
             .frame(width: width, height: height)
             .offset(y: -height / 2)
