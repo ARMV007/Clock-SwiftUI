@@ -4,21 +4,20 @@
 //
 //  Created by Abhishek  on 17/09/24.
 //
-
 import SwiftUI
 
 struct ContentView: View {
-    var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
-        }
-        .padding()
-    }
-}
+    @State private var currentDate = Date()
 
-#Preview {
-    ContentView()
+    var body: some View {
+        ZStack {
+            // Clock background
+            Circle()
+                .fill(Color.white)
+                .overlay(
+                    Circle().stroke(Color.black, lineWidth: 10)
+                )
+                .frame(width: 300, height: 300)
+        }
+    }
 }
