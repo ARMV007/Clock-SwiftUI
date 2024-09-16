@@ -23,10 +23,26 @@ struct ContentView: View {
             ForEach(0..<12) { i in
                 Rectangle()
                     .fill(Color.black)
-                    .frame(width: 5, height: 20)
+                    .frame(width: 2, height: 20)
                     .offset(y: -150 + 10)
                     .rotationEffect(.degrees(Double(i) * 30))
             }
+            
+            // Hour hand
+            HandView(width: 6, height: 80)
         }
+    }
+}
+
+struct HandView: View {
+    var width: CGFloat
+    var height: CGFloat
+    var color: Color = .black
+
+    var body: some View {
+        Rectangle()
+            .fill(color)
+            .frame(width: width, height: height)
+            .offset(y: -height / 2)
     }
 }
