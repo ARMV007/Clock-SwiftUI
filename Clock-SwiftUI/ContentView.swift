@@ -34,6 +34,16 @@ struct ContentView: View {
                 // Hour hand
                 HandView(width: clockSize * 0.02, height: clockSize * 0.3)
                     .rotationEffect(.degrees(hourHandAngle(for: currentDate)))
+                
+                
+               // Minute hand
+               HandView(width: clockSize * 0.015, height: clockSize * 0.4)
+                   .rotationEffect(.degrees(minuteHandAngle(for: currentDate)))
+               
+               // Second hand
+               HandView(width: clockSize * 0.005, height: clockSize * 0.45, color: .red)
+                   .rotationEffect(.degrees(secondHandAngle(for: currentDate)))
+                         
             }
             .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
 
@@ -45,6 +55,18 @@ struct ContentView: View {
         let hour = Double(calendar.component(.hour, from: date) % 12)
         let minute = Double(calendar.component(.minute, from: date))
         return (hour + minute / 60) * 30 // 360 degrees / 12 hours = 30 degrees per hour
+    }
+    
+    func minuteHandAngle(for date: Date) -> Double {
+        let calendar = Calendar.current
+        let minute = Double(calendar.component(.minute, from: date))
+        return minute * 6 // 360 degrees / 60 minutes = 6 degrees per minute
+    }
+    
+    func secondHandAngle(for date: Date) -> Double {
+        let calendar = Calendar.current
+        let second = Double(calendar.component(.second, from: date))
+        return second * 6 // 360 degrees / 60 seconds = 6 degrees per second
     }
 }
 
