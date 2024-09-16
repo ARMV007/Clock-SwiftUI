@@ -34,19 +34,29 @@ struct ContentView: View {
                 // Hour hand
                 HandView(width: clockSize * 0.02, height: clockSize * 0.3)
                     .rotationEffect(.degrees(hourHandAngle(for: currentDate)))
-                
+                    .animation(.linear(duration: 0.5), value: currentDate)
+
                 
                // Minute hand
                HandView(width: clockSize * 0.015, height: clockSize * 0.4)
                    .rotationEffect(.degrees(minuteHandAngle(for: currentDate)))
-               
+                   .animation(.linear(duration: 0.5), value: currentDate)
+
                // Second hand
                HandView(width: clockSize * 0.005, height: clockSize * 0.45, color: .red)
                    .rotationEffect(.degrees(secondHandAngle(for: currentDate)))
-                         
+                   .animation(.linear(duration: 0.5), value: currentDate)
+
             }
+            .onAppear(perform: startTimer)
             .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
 
+        }
+    }
+    
+    func startTimer() {
+        Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
+            self.currentDate = Date()
         }
     }
     
