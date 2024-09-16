@@ -33,12 +33,21 @@ struct ContentView: View {
                 
                 // Hour hand
                 HandView(width: clockSize * 0.02, height: clockSize * 0.3)
+                    .rotationEffect(.degrees(hourHandAngle(for: currentDate)))
             }
             .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
 
         }
     }
+    
+    func hourHandAngle(for date: Date) -> Double {
+        let calendar = Calendar.current
+        let hour = Double(calendar.component(.hour, from: date) % 12)
+        let minute = Double(calendar.component(.minute, from: date))
+        return (hour + minute / 60) * 30 // 360 degrees / 12 hours = 30 degrees per hour
+    }
 }
+
 
 struct HandView: View {
     var width: CGFloat
