@@ -8,6 +8,7 @@ import SwiftUI
 
 struct ContentView: View {
     @State private var currentDate = Date()
+    @State private var totalSeconds: Int = 0
     
     var body: some View {
         GeometryReader { geometry in
@@ -44,8 +45,8 @@ struct ContentView: View {
 
                // Second hand
                HandView(width: clockSize * 0.005, height: clockSize * 0.45, color: .red)
-                   .rotationEffect(.degrees(secondHandAngle(for: currentDate)))
-                   .animation(.linear(duration: 0.5), value: currentDate)
+                    .rotationEffect(.degrees(secondHandAngle()))
+                   .animation(.linear(duration: 0.5), value: totalSeconds)
 
             }
             .onAppear(perform: startTimer)
@@ -57,6 +58,7 @@ struct ContentView: View {
     func startTimer() {
         Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
             self.currentDate = Date()
+            totalSeconds+=1
         }
     }
     
@@ -73,10 +75,8 @@ struct ContentView: View {
         return minute * 6 // 360 degrees / 60 minutes = 6 degrees per minute
     }
     
-    func secondHandAngle(for date: Date) -> Double {
-        let calendar = Calendar.current
-        let second = Double(calendar.component(.second, from: date))
-        return second * 6 // 360 degrees / 60 seconds = 6 degrees per second
+    func secondHandAngle() -> Double {
+        return Double(totalSeconds % 60) * 6 // 360 degrees / 60 seconds = 6 degrees per second
     }
 }
 
