@@ -34,6 +34,8 @@ struct ContentView: View {
                 // Hour hand
                 HandView(width: clockSize * 0.02, height: clockSize * 0.3)
             }
+            .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
+
         }
     }
 }
