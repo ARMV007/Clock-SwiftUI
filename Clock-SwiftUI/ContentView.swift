@@ -5,11 +5,14 @@
 //  Created by Abhishek  on 17/09/24.
 //
 import SwiftUI
+import AVFoundation
+
 
 struct ContentView: View {
     @State private var currentDate = Date()
     @State private var totalSeconds: Int = 0
-    
+    @StateObject private var soundManager = SoundManager() // Manage sound playback with StateObject
+
     var body: some View {
         GeometryReader { geometry in
             let clockSize = min(geometry.size.width, geometry.size.height) * 0.8
@@ -19,7 +22,7 @@ struct ContentView: View {
                 Circle()
                     .fill(Color.white)
                     .overlay(
-                        Circle().stroke(Color.black, lineWidth: 4)
+                        Circle().stroke(Color.black, lineWidth: clockSize * 0.015)
                     )
                     .frame(width: clockSize, height: clockSize)
                 
@@ -33,32 +36,35 @@ struct ContentView: View {
                 }
                 
                 // Hour hand with rounded corners
-               HandView(width: clockSize * 0.02, height: clockSize * 0.3, cornerRadius: clockSize * 0.01)
-                   .rotationEffect(.degrees(hourHandAngle(for: currentDate)))
-                   .animation(.linear(duration: 0.5), value: currentDate)
-               
-               // Minute hand with rounded corners
-               HandView(width: clockSize * 0.015, height: clockSize * 0.4, cornerRadius: clockSize * 0.01)
-                   .rotationEffect(.degrees(minuteHandAngle(for: currentDate)))
-                   .animation(.linear(duration: 0.5), value: currentDate)
-               
-               // Second hand with rounded corners
-               HandView(width: clockSize * 0.005, height: clockSize * 0.45, color: .red, cornerRadius: clockSize * 0.0025)
-                   .rotationEffect(.degrees(secondHandAngle()))
-                   .animation(.linear(duration: 0.5), value: totalSeconds)
-             
-
+                HandView(width: clockSize * 0.02, height: clockSize * 0.3, cornerRadius: clockSize * 0.01)
+                    .rotationEffect(.degrees(hourHandAngle(for: currentDate)))
+                    .animation(.linear(duration: 0.5), value: currentDate)
+                
+                // Minute hand with rounded corners
+                HandView(width: clockSize * 0.015, height: clockSize * 0.4, cornerRadius: clockSize * 0.01)
+                    .rotationEffect(.degrees(minuteHandAngle(for: currentDate)))
+                    .animation(.linear(duration: 0.5), value: currentDate)
+                
+                // Second hand with rounded corners
+                HandView(width: clockSize * 0.005, height: clockSize * 0.45, color: .red, cornerRadius: clockSize * 0.0025)
+                    .rotationEffect(.degrees(secondHandAngle()))
+                    .animation(.linear(duration: 0.5), value: totalSeconds)
             }
-            .onAppear(perform: startTimer)
+            .onAppear {
+                startTimer()
+                soundManager.prepareTickSound() // Prepare the tick sound
+            }
+            .frame(width: geometry.size.width, height: geometry.size.height, alignment: .center)
             .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
-
         }
+        .edgesIgnoringSafeArea(.all)
     }
     
     func startTimer() {
         Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
             self.currentDate = Date()
-            totalSeconds+=1
+            self.totalSeconds += 1
+            soundManager.playTickSound() // Play the tick sound every second
         }
     }
     
@@ -80,7 +86,6 @@ struct ContentView: View {
     }
 }
 
-
 struct HandView: View {
     var width: CGFloat
     var height: CGFloat
@@ -92,5 +97,27 @@ struct HandView: View {
             .fill(color)
             .frame(width: width, height: height)
             .offset(y: -height / 2)
+    }
+}
+
+class SoundManager: ObservableObject {
+    private var tickSoundPlayer: AVAudioPlayer?
+
+    func prepareTickSound() {
+        guard let soundURL = Bundle.main.url(forResource: "tick", withExtension: "mp3") else {
+            print("Tick sound file not found")
+            return
+        }
+
+        do {
+            tickSoundPlayer = try AVAudioPlayer(contentsOf: soundURL)
+            tickSoundPlayer?.prepareToPlay()
+        } catch {
+            print("Error loading tick sound: \(error.localizedDescription)")
+        }
+    }
+
+    func playTickSound() {
+        tickSoundPlayer?.play()
     }
 }
